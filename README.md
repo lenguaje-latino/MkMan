@@ -27,4 +27,4 @@ Nunca fué más fácil crear manuales de Linux
 
 ### Instalar manual
 
-sudo mkman --instalar nombre_del_manual
+`sudo mkman --instalar nombre_del_manual`
