@@ -1,0 +1,63 @@
+#!/usr/bin/latino
+global ext = ".1"
+funcion menu(argc, argv)
+   si argc != 2
+      imprimirf("%s\n%s\n",
+      "ERROR: necesita un archivo para escribir en un argumento de esta forma:'archivo'",
+      "No incluyas la extensión, el script te lo hará por automatico")
+      retornar 0
+   fin
+   global file = argv[1]..ext
+   si !archivo.leer(file)
+      imprimirf("Estás creando un nuevo archivo, por favor escribe el título: ")
+      titulo = leer()
+      imprimirf("Escribe la licensia: ")
+      licensia = leer()
+      imprimirf("Escribe el nombre del Desarrollador: ")
+      desarrollador = leer()
+      archivo.copiar(file, cadena.formato('.TH %s "%s" "%s"%c', titulo, licensia, desarrollador, 10))
+   fin
+   imprimirf("Instrucciones:"
+   .."\n\t[nombre del indice]: para crear un subindice (SH).\n"
+   .."\n\t_texto en italicas_: para escribir algún texto en italicas (fi).\n"
+   .."\n\t*Texto bold*: escribe texto con formato bold (fB).\n"
+   .."\n\t(espacio en blanco): hace un salto de parrafo (PP).\n"
+   .."\n\t(salto de linea sin texto): hace un salto de línea (br).\n"
+   .."\n\t>: abrir un parrafo indexado (rs).\n"
+   .."\n\t<: cerrar parrafo indexado (re).\n\n")
+   mientras (1)
+      imprimirf(": ")
+      texto = leer()
+      si cadena.longitud(texto) == 0
+         archivo.copiar(file, cadena.formato(".br%c", 10))
+      osi texto == " "
+         archivo.copiar(file, cadena.formato(".PP%c", 10))
+      osi texto ~= "^\[" && texto ~= "\]$"
+            texto = cadena.match(texto, "\[(.*)\]")
+            archivo.copiar(file, cadena.formato(".SH %s%c", texto[0][1], 10))
+      osi cadena.match(texto, "(.*)_(.*)_(.*)") && texto ~= "\_.+\_"
+            texto = cadena.match(texto, "(.*)_(.*)_(.*)")
+            len = lista.longitud(texto[0])-1
+            elegir(len)
+               caso 1: archivo.copiar(file, cadena.formato("\fi%s\fR%c", texto[0][1], 10))
+               caso 2: archivo.copiar(file, cadena.formato("%s\fi%s\fR%c", texto[0][1], texto[0][2], 10))
+               caso 3: archivo.copiar(file, cadena.formato("%s\fi%s\fR%s%c", texto[0][1], texto[0][2], texto[0][3], 10))
+            fin
+      osi cadena.match(texto, "(.*)\*(.*)\*(.*)")  && texto ~= "\*.+\*"
+            texto = cadena.match(texto, "(.*)\*(.*)\*(.*)")
+            len = lista.longitud(texto[0])-1
+            elegir(len)
+               caso 1: archivo.copiar(file, cadena.formato("\fB%s\fR%c", texto[0][1], 10))
+               caso 2: archivo.copiar(file, cadena.formato("%s\fB%s\fR%c", texto[0][1], texto[0][2], 10))
+               caso 3: archivo.copiar(file, cadena.formato("%s\fB%s\fR%s%c", texto[0][1], texto[0][2], texto[0][3], 10))
+            fin
+      osi texto == ">"
+         archivo.copiar(file, ".RS"..cadena.formato("%c", 10))
+      osi texto == "<"
+         archivo.copiar(file, ".RE"..cadena.formato("%c", 10))
+      sino
+         archivo.copiar(file, texto..cadena.formato("%c", 10))
+      fin
+   fin
+
+fin
