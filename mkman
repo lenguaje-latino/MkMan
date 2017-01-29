@@ -11,11 +11,11 @@ funcion menu(argc, argv)
    si !archivo.leer(file)
       imprimirf("Estás creando un nuevo archivo, por favor escribe el título: ")
       titulo = leer()
-      imprimirf("Escribe la licensia: ")
-      licensia = leer()
+      imprimirf("Escribe la licencia: ")
+      licencia = leer()
       imprimirf("Escribe el nombre del Desarrollador: ")
       desarrollador = leer()
-      archivo.copiar(file, cadena.formato('.TH %s "%s" "%s"%c', titulo, licensia, desarrollador, 10))
+      archivo.copiar(file, cadena.formato('.TH %s "%s" "%s"%c', titulo, licencia, desarrollador, 10))
    fin
    imprimirf("Instrucciones:"
    .."\n\t[nombre del indice]: para crear un subindice (SH).\n"
